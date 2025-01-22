@@ -14,22 +14,22 @@ func TestGame(t *testing.T) {
 		scoreWanted int
 	}{
 		{
-			"one question right",
-			[]quizgame.Problem{{"2+2", "4"}},
-			[]string{"4"},
-			1,
+			testName:    "one question right",
+			problems:    []quizgame.Problem{{"2+2", "4"}},
+			answers:     []string{"4"},
+			scoreWanted: 1,
 		},
 		{
-			"multiple questions right",
-			[]quizgame.Problem{{"2+2", "4"}, {"3*2", "6"}, {"5-3", "2"}},
-			[]string{"4", "6", "2"},
-			3,
+			testName:    "multiple questions right",
+			problems:    []quizgame.Problem{{"2+2", "4"}, {"3*2", "6"}, {"5-3", "2"}},
+			answers:     []string{"4", "6", "2"},
+			scoreWanted: 3,
 		},
 		{
-			"multiple questions with some wrong answers",
-			[]quizgame.Problem{{"2+2", "4"}, {"3*2", "6"}, {"5-3", "2"}},
-			[]string{"4", "5", "3"},
-			1,
+			testName:    "multiple questions with some wrong answers",
+			problems:    []quizgame.Problem{{"2+2", "4"}, {"3*2", "6"}, {"5-3", "2"}},
+			answers:     []string{"4", "5", "3"},
+			scoreWanted: 1,
 		},
 	}
 	for _, testCase := range cases {
