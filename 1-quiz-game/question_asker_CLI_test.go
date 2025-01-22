@@ -15,7 +15,6 @@ func TestAskQuestion(t *testing.T) {
 	out := &bytes.Buffer{}
 
 	questionAskerCLI := quizgame.NewQuestionAskerCLI(in, out)
-
 	aGot := questionAskerCLI.AskQuestion(q)
 
 	if aGot != aExpected {
@@ -29,7 +28,6 @@ func TestShowScore(t *testing.T) {
 	out := &bytes.Buffer{}
 
 	questionAskerCLI := quizgame.NewQuestionAskerCLI(nil, out)
-
 	questionAskerCLI.ShowScore(4, 10)
 
 	assertOutput(t, out.String(), "You scored 4 out of 10")

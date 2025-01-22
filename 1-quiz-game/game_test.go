@@ -73,11 +73,17 @@ type StubQuestionAsker struct {
 
 func (qAsker *StubQuestionAsker) AskQuestion(question string) (answer string) {
 	qAsker.questionAsked = append(qAsker.questionAsked, question)
+
+	if len(qAsker.answers) == 0 {
+		return ""
+	}
+
 	answer = qAsker.answers[0]
 
 	if len(qAsker.answers) > 1 {
 		qAsker.answers = qAsker.answers[1:]
 	}
+
 	return
 }
 

@@ -23,9 +23,7 @@ func TestGetQAFromFS(t *testing.T) {
 			{"1+1", "2"},
 		}
 
-		if err != nil {
-			t.Fatalf("expected no errors but got one: %v", err)
-		}
+		assertNoError(t, err)
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("expected %v got %v", want, got)
@@ -41,12 +39,24 @@ func TestGetQAFromFS(t *testing.T) {
 
 		_, err := quizgame.GetQAPairsFromFS(fs, path)
 
-		if err == nil {
-			t.Fatal("expected an error but didn't get one")
-		}
-
-		if err != quizgame.ErrInvalidCSVFile {
-			t.Fatalf("wanted %v but got %v", quizgame.ErrInvalidCSVFile, err)
-		}
+		assertError(t, err, quizgame.ErrInvalidCSVFile)
 	})
+}
+
+func assertNoError(t testing.TB, got error) {
+	t.Helper()
+	if got != nil {
+		t.Fatalf("expected no errors but got one: %v", got)
+	}
+}
+
+func assertError(t testing.TB, got, want error) {
+	t.Helper()
+	if got == nil {
+		t.Fatal("expected an error but didn't get one")
+	}
+
+	if got != want {
+		t.Fatalf("wanted %v but got %v", want, got)
+	}
 }
