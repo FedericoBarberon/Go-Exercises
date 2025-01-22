@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetQAFromFS(t *testing.T) {
-	t.Run("calls with a valid QA csv file", func(t *testing.T) {
+	t.Run("calls with a valid csv file", func(t *testing.T) {
 		path := "problems.csv"
 		fs := fstest.MapFS{
 			path: &fstest.MapFile{
@@ -16,8 +16,8 @@ func TestGetQAFromFS(t *testing.T) {
 			},
 		}
 
-		got, err := quizgame.GetQAFromFS(fs, path)
-		want := quizgame.QA{
+		got, err := quizgame.GetQAPairsFromFS(fs, path)
+		want := []quizgame.QAPair{
 			{"5+5", "10"},
 			{"7+3", "10"},
 			{"1+1", "2"},
@@ -31,7 +31,7 @@ func TestGetQAFromFS(t *testing.T) {
 			t.Errorf("expected %v got %v", want, got)
 		}
 	})
-	t.Run("calls with an invalid QA csv file", func(t *testing.T) {
+	t.Run("calls with an invalid csv file", func(t *testing.T) {
 		path := "problems.csv"
 		fs := fstest.MapFS{
 			path: &fstest.MapFile{
@@ -39,7 +39,7 @@ func TestGetQAFromFS(t *testing.T) {
 			},
 		}
 
-		_, err := quizgame.GetQAFromFS(fs, path)
+		_, err := quizgame.GetQAPairsFromFS(fs, path)
 
 		if err == nil {
 			t.Fatal("expected an error but didn't get one")

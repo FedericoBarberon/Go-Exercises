@@ -1,24 +1,22 @@
 package quizgame
 
-type QA [][]string
-
 type QuestionAsker interface {
 	AskQuestion(q string) (a string)
 	ShowScore(score, totalQuestions int)
 }
 
 type Game struct {
-	QA            QA
+	qaPairs       []QAPair
 	questionAsker QuestionAsker
 }
 
-func NewGame(qa QA, questionAsker QuestionAsker) Game {
-	return Game{qa, questionAsker}
+func NewGame(qaPairs []QAPair, questionAsker QuestionAsker) Game {
+	return Game{qaPairs, questionAsker}
 }
 
 func (g *Game) Play() {
 	var score int
-	for _, qaPair := range g.QA {
+	for _, qaPair := range g.qaPairs {
 		q, a := qaPair[0], qaPair[1]
 
 		aGot := g.questionAsker.AskQuestion(q)
@@ -27,5 +25,5 @@ func (g *Game) Play() {
 			score++
 		}
 	}
-	g.questionAsker.ShowScore(score, len(g.QA))
+	g.questionAsker.ShowScore(score, len(g.qaPairs))
 }

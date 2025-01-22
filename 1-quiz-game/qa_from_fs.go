@@ -9,16 +9,22 @@ import (
 
 var ErrInvalidCSVFile = fmt.Errorf("invalid QA CSV file")
 
-func GetQAFromFS(fs fs.FS, path string) (QA, error) {
+func GetQAPairsFromFS(fs fs.FS, path string) ([]QAPair, error) {
 	file, err := fs.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %v", err)
 	}
 	defer file.Close()
-	return getQAFromReader(file)
+	qaPairs, err := getQAPairsFromReader(file)
+
+	if err == ErrInvalidFormat {
+		return nil, ErrInvalidCSVFile
+	}
+
+	return qaPairs, nil
 }
 
-func getQAFromReader(rdr io.Reader) (QA, error) {
+func getQAPairsFromReader(rdr io.Reader) ([]QAPair, error) {
 	csvReader := csv.NewReader(rdr)
 	data, err := csvReader.ReadAll()
 
@@ -26,19 +32,5 @@ func getQAFromReader(rdr io.Reader) (QA, error) {
 		return nil, fmt.Errorf("failed to reading file: %v", err)
 	}
 
-	if !isValidQA(data) {
-		return nil, ErrInvalidCSVFile
-	}
-
-	return QA(data), nil
-}
-
-func isValidQA(data [][]string) bool {
-	for _, tuple := range data {
-		if len(tuple) != 2 {
-			return false
-		}
-	}
-
-	return true
+	return CastQaPairs(data)
 }
