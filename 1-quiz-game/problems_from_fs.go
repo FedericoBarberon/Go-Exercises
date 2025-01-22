@@ -9,10 +9,10 @@ import (
 	"strings"
 )
 
-var ErrInvalidCSVFile = errors.New("provided an invalid QA CSV file")
+var ErrInvalidCSVFile = errors.New("provided an invalid problems CSV file")
 var ErrNotCSVFile = errors.New("provided a non csv file")
 
-func GetQAPairsFromFS(fs fs.FS, path string) ([]QAPair, error) {
+func GetProblemsFromFS(fs fs.FS, path string) ([]Problem, error) {
 	if !strings.HasSuffix(path, ".csv") {
 		return nil, ErrNotCSVFile
 	}
@@ -23,16 +23,16 @@ func GetQAPairsFromFS(fs fs.FS, path string) ([]QAPair, error) {
 	}
 	defer file.Close()
 
-	qaPairs, err := getQAPairsFromReader(file)
+	problems, err := getProblemsFromReader(file)
 
 	if err == ErrInvalidFormat {
 		return nil, ErrInvalidCSVFile
 	}
 
-	return qaPairs, nil
+	return problems, nil
 }
 
-func getQAPairsFromReader(rdr io.Reader) ([]QAPair, error) {
+func getProblemsFromReader(rdr io.Reader) ([]Problem, error) {
 	csvReader := csv.NewReader(rdr)
 	data, err := csvReader.ReadAll()
 
@@ -40,5 +40,5 @@ func getQAPairsFromReader(rdr io.Reader) ([]QAPair, error) {
 		return nil, fmt.Errorf("failed to reading file: %v", err)
 	}
 
-	return CastQaPairs(data)
+	return CastProblems(data)
 }

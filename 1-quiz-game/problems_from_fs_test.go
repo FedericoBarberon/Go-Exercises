@@ -16,8 +16,8 @@ func TestGetQAFromFS(t *testing.T) {
 			},
 		}
 
-		got, err := quizgame.GetQAPairsFromFS(fs, path)
-		want := []quizgame.QAPair{
+		got, err := quizgame.GetProblemsFromFS(fs, path)
+		want := []quizgame.Problem{
 			{"5+5", "10"},
 			{"7+3", "10"},
 			{"1+1", "2"},
@@ -37,7 +37,7 @@ func TestGetQAFromFS(t *testing.T) {
 			},
 		}
 
-		_, err := quizgame.GetQAPairsFromFS(fs, path)
+		_, err := quizgame.GetProblemsFromFS(fs, path)
 
 		assertError(t, err, quizgame.ErrInvalidCSVFile)
 	})
@@ -49,7 +49,7 @@ func TestGetQAFromFS(t *testing.T) {
 			},
 		}
 
-		_, err := quizgame.GetQAPairsFromFS(fs, path)
+		_, err := quizgame.GetProblemsFromFS(fs, path)
 
 		assertError(t, err, quizgame.ErrNotCSVFile)
 	})

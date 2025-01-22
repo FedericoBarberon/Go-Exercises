@@ -8,13 +8,13 @@ import (
 
 func TestGame(t *testing.T) {
 	t.Run("one question right", func(t *testing.T) {
-		qaPairs := []quizgame.QAPair{
+		problems := []quizgame.Problem{
 			{"2+2", "4"},
 		}
 
 		questionAsker := &StubQuestionAsker{answers: []string{"4"}}
 
-		game := quizgame.NewGame(qaPairs, questionAsker)
+		game := quizgame.NewGame(problems, questionAsker)
 
 		game.Play()
 
@@ -22,10 +22,10 @@ func TestGame(t *testing.T) {
 
 		assertScore(t, questionAsker.scoreGot, 1)
 		assertQuestionsAsked(t, questionAsker.questionAsked, questionsWanted)
-		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(qaPairs))
+		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(problems))
 	})
 	t.Run("multiple questions right", func(t *testing.T) {
-		qaPairs := []quizgame.QAPair{
+		problems := []quizgame.Problem{
 			{"2+2", "4"},
 			{"3*2", "6"},
 			{"5-3", "2"},
@@ -33,7 +33,7 @@ func TestGame(t *testing.T) {
 
 		questionAsker := &StubQuestionAsker{answers: []string{"4", "6", "2"}}
 
-		game := quizgame.NewGame(qaPairs, questionAsker)
+		game := quizgame.NewGame(problems, questionAsker)
 
 		game.Play()
 
@@ -41,10 +41,10 @@ func TestGame(t *testing.T) {
 
 		assertScore(t, questionAsker.scoreGot, 3)
 		assertQuestionsAsked(t, questionAsker.questionAsked, questionsWanted)
-		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(qaPairs))
+		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(problems))
 	})
 	t.Run("multiple questions with some wrong answers", func(t *testing.T) {
-		qaPairs := []quizgame.QAPair{
+		problems := []quizgame.Problem{
 			{"2+2", "4"},
 			{"3*2", "6"},
 			{"5-3", "2"},
@@ -52,7 +52,7 @@ func TestGame(t *testing.T) {
 
 		questionAsker := &StubQuestionAsker{answers: []string{"4", "5", "3"}}
 
-		game := quizgame.NewGame(qaPairs, questionAsker)
+		game := quizgame.NewGame(problems, questionAsker)
 
 		game.Play()
 
@@ -60,7 +60,7 @@ func TestGame(t *testing.T) {
 
 		assertScore(t, questionAsker.scoreGot, 1)
 		assertQuestionsAsked(t, questionAsker.questionAsked, questionsWanted)
-		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(qaPairs))
+		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(problems))
 	})
 }
 

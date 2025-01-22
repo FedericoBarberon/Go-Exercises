@@ -6,24 +6,22 @@ type QuestionAsker interface {
 }
 
 type Game struct {
-	qaPairs       []QAPair
+	problems      []Problem
 	questionAsker QuestionAsker
 }
 
-func NewGame(qaPairs []QAPair, questionAsker QuestionAsker) Game {
-	return Game{qaPairs, questionAsker}
+func NewGame(problems []Problem, questionAsker QuestionAsker) Game {
+	return Game{problems, questionAsker}
 }
 
 func (g *Game) Play() {
 	var score int
-	for _, qaPair := range g.qaPairs {
-		q, a := qaPair[0], qaPair[1]
+	for _, problem := range g.problems {
+		aGot := g.questionAsker.AskQuestion(problem.Question)
 
-		aGot := g.questionAsker.AskQuestion(q)
-
-		if aGot == a {
+		if aGot == problem.Answer {
 			score++
 		}
 	}
-	g.questionAsker.ShowScore(score, len(g.qaPairs))
+	g.questionAsker.ShowScore(score, len(g.problems))
 }
