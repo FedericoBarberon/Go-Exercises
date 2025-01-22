@@ -7,61 +7,51 @@ import (
 )
 
 func TestGame(t *testing.T) {
-	t.Run("one question right", func(t *testing.T) {
-		problems := []quizgame.Problem{
-			{"2+2", "4"},
-		}
+	cases := []struct {
+		testName    string
+		problems    []quizgame.Problem
+		answers     []string
+		scoreWanted int
+	}{
+		{
+			"one question right",
+			[]quizgame.Problem{{"2+2", "4"}},
+			[]string{"4"},
+			1,
+		},
+		{
+			"multiple questions right",
+			[]quizgame.Problem{{"2+2", "4"}, {"3*2", "6"}, {"5-3", "2"}},
+			[]string{"4", "6", "2"},
+			3,
+		},
+		{
+			"multiple questions with some wrong answers",
+			[]quizgame.Problem{{"2+2", "4"}, {"3*2", "6"}, {"5-3", "2"}},
+			[]string{"4", "5", "3"},
+			1,
+		},
+	}
+	for _, testCase := range cases {
+		t.Run(testCase.testName, func(t *testing.T) {
+			questionAsker := &StubQuestionAsker{answers: testCase.answers}
 
-		questionAsker := &StubQuestionAsker{answers: []string{"4"}}
+			game := quizgame.NewGame(testCase.problems, questionAsker)
+			game.Play()
 
-		game := quizgame.NewGame(problems, questionAsker)
+			assertScore(t, questionAsker.scoreGot, testCase.scoreWanted)
+			assertQuestionsAsked(t, questionAsker.questionAsked, getQuestionsFromProblems(testCase.problems))
+			assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(testCase.problems))
+		})
+	}
+}
 
-		game.Play()
-
-		questionsWanted := []string{"2+2"}
-
-		assertScore(t, questionAsker.scoreGot, 1)
-		assertQuestionsAsked(t, questionAsker.questionAsked, questionsWanted)
-		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(problems))
-	})
-	t.Run("multiple questions right", func(t *testing.T) {
-		problems := []quizgame.Problem{
-			{"2+2", "4"},
-			{"3*2", "6"},
-			{"5-3", "2"},
-		}
-
-		questionAsker := &StubQuestionAsker{answers: []string{"4", "6", "2"}}
-
-		game := quizgame.NewGame(problems, questionAsker)
-
-		game.Play()
-
-		questionsWanted := []string{"2+2", "3*2", "5-3"}
-
-		assertScore(t, questionAsker.scoreGot, 3)
-		assertQuestionsAsked(t, questionAsker.questionAsked, questionsWanted)
-		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(problems))
-	})
-	t.Run("multiple questions with some wrong answers", func(t *testing.T) {
-		problems := []quizgame.Problem{
-			{"2+2", "4"},
-			{"3*2", "6"},
-			{"5-3", "2"},
-		}
-
-		questionAsker := &StubQuestionAsker{answers: []string{"4", "5", "3"}}
-
-		game := quizgame.NewGame(problems, questionAsker)
-
-		game.Play()
-
-		questionsWanted := []string{"2+2", "3*2", "5-3"}
-
-		assertScore(t, questionAsker.scoreGot, 1)
-		assertQuestionsAsked(t, questionAsker.questionAsked, questionsWanted)
-		assertTotalQuestions(t, questionAsker.totalQuestionsGot, len(problems))
-	})
+func getQuestionsFromProblems(problems []quizgame.Problem) []string {
+	questions := make([]string, 0, len(problems))
+	for _, problem := range problems {
+		questions = append(questions, problem.Question)
+	}
+	return questions
 }
 
 type StubQuestionAsker struct {
