@@ -28,9 +28,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	questionAsker := quizgame.NewStdQuestionAsker()
 	timer := quizgame.RealTimer{}
 	timeLimit := time.Duration(*timeLimitSecFlag) * time.Second
 
-	game := quizgame.NewGame(problems, quizgame.NewStdQuestionAsker(), timer, timeLimit)
+	game := quizgame.NewGame(problems, questionAsker, timer, timeLimit)
 	game.Play()
 }
