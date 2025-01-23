@@ -25,12 +25,26 @@ func TestAskQuestion(t *testing.T) {
 }
 
 func TestShowScore(t *testing.T) {
-	out := &bytes.Buffer{}
+	t.Run("on time not over", func(t *testing.T) {
+		out := &bytes.Buffer{}
+		timeOver := false
 
-	questionAskerCLI := quizgame.NewQuestionAskerCLI(nil, out)
-	questionAskerCLI.ShowScore(4, 10)
+		questionAskerCLI := quizgame.NewQuestionAskerCLI(nil, out)
+		questionAskerCLI.ShowScore(4, 10, timeOver)
 
-	assertOutput(t, out.String(), "You scored 4 out of 10")
+		assertOutput(t, out.String(), "You scored 4 out of 10")
+	})
+	t.Run("on time over", func(t *testing.T) {
+		out := &bytes.Buffer{}
+		timeOver := true
+
+		questionAskerCLI := quizgame.NewQuestionAskerCLI(nil, out)
+		questionAskerCLI.ShowScore(4, 10, timeOver)
+
+		outputWanted := quizgame.TimeOverPrefixMessage + "You scored 4 out of 10"
+
+		assertOutput(t, out.String(), outputWanted)
+	})
 }
 
 func assertOutput(t testing.TB, got, want string) {

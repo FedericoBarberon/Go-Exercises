@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+const TimeOverPrefixMessage = "\nTime over: "
+
 type QuestionAskerCLI struct {
 	in  *bufio.Scanner
 	out io.Writer
@@ -33,8 +35,14 @@ func (cli *QuestionAskerCLI) AskQuestion(q string) (answer string) {
 	return
 }
 
-func (cli *QuestionAskerCLI) ShowScore(score, totalQuestions int) {
-	cli.out.Write([]byte(fmt.Sprintf("You scored %d out of %d", score, totalQuestions)))
+func (cli *QuestionAskerCLI) ShowScore(score, totalQuestions int, timeOver bool) {
+	var message string
+	if timeOver {
+		message = TimeOverPrefixMessage
+	}
+	message += fmt.Sprintf("You scored %d out of %d", score, totalQuestions)
+
+	cli.out.Write([]byte(message))
 }
 
 func (cli *QuestionAskerCLI) readLine() string {
