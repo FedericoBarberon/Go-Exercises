@@ -27,8 +27,8 @@ func TestMapHandler(t *testing.T) {
 			redirectTo: "/bye",
 		},
 		{
-			path:       "/hello",
-			redirectTo: "/bye",
+			path:       "/a",
+			redirectTo: "/b",
 		},
 	}
 
@@ -46,17 +46,77 @@ func TestMapHandler(t *testing.T) {
 		},
 	}
 
+	handler := urlshort.MapHandler(paths, fallback)
+
 	for _, testCase := range redirectCases {
 		t.Run(fmt.Sprintf("redirects %s to %s", testCase.path, testCase.redirectTo), func(t *testing.T) {
-			assertRedirect(t, urlshort.MapHandler(paths, fallback), testCase.path, testCase.redirectTo)
+			assertRedirect(t, handler, testCase.path, testCase.redirectTo)
 		})
 	}
 
 	for _, testCase := range noRedirectCases {
 		t.Run("use fallback on "+testCase.path, func(t *testing.T) {
-			assertBody(t, urlshort.MapHandler(paths, fallback), testCase.path, testCase.bodyStr)
+			assertBody(t, handler, testCase.path, testCase.bodyStr)
 		})
 	}
+}
+
+func TestYAMLHandler(t *testing.T) {
+	t.Run("valid YAML", func(t *testing.T) {
+		fallback := fallbackMux()
+
+		pathsYAML := `
+- path: /hello
+  url: /bye
+- path: /a
+  url: /b`
+
+		redirectCases := []struct {
+			path       string
+			redirectTo string
+		}{
+			{
+				path:       "/hello",
+				redirectTo: "/bye",
+			},
+			{
+				path:       "/a",
+				redirectTo: "/b",
+			},
+		}
+
+		noRedirectCases := []struct {
+			path    string
+			bodyStr string
+		}{
+			{
+				path:    "/notMapped",
+				bodyStr: "test",
+			},
+			{
+				path:    "/",
+				bodyStr: "default mux",
+			},
+		}
+
+		handler, _ := urlshort.YAMLHandler([]byte(pathsYAML), fallback)
+
+		for _, testCase := range redirectCases {
+			t.Run(fmt.Sprintf("redirects %s to %s", testCase.path, testCase.redirectTo), func(t *testing.T) {
+				assertRedirect(t, handler, testCase.path, testCase.redirectTo)
+			})
+		}
+
+		for _, testCase := range noRedirectCases {
+			t.Run("use fallback on "+testCase.path, func(t *testing.T) {
+				assertBody(t, handler, testCase.path, testCase.bodyStr)
+			})
+		}
+	})
+	t.Run("invalid YAML", func(t *testing.T) {
+		_, err := urlshort.YAMLHandler([]byte("invalid yaml"), nil)
+		assertError(t, err, urlshort.ErrInvalidYAML)
+	})
 }
 
 func fallbackMux() http.Handler {
@@ -69,6 +129,18 @@ func fallbackMux() http.Handler {
 	})
 
 	return fallback
+}
+
+func assertError(t testing.TB, got, want error) {
+	t.Helper()
+
+	if got == nil {
+		t.Fatal("Expected an error but didn't get one")
+	}
+
+	if got != want {
+		t.Errorf("expected %v but got %v", want, got)
+	}
 }
 
 func assertRedirect(t testing.TB, handler http.Handler, path, redirectTo string) {
@@ -86,7 +158,12 @@ func assertRedirect(t testing.TB, handler http.Handler, path, redirectTo string)
 		t.Errorf("expected status %d but got %d", statusWanted, statusGot)
 	}
 
-	urlObj, _ := response.Result().Location()
+	urlObj, err := response.Result().Location()
+
+	if err != nil {
+		t.Fatal("no location provided ", err)
+	}
+
 	urlGot := urlObj.String()
 
 	if urlGot != redirectTo {
