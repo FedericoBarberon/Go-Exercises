@@ -10,11 +10,11 @@ import (
 )
 
 func TestMapHandler(t *testing.T) {
-	defaultMux := http.NewServeMux()
-	defaultMux.HandleFunc("/notMapped", func(w http.ResponseWriter, r *http.Request) {
+	fallback := http.NewServeMux()
+	fallback.HandleFunc("/notMapped", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "test")
 	})
-	defaultMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	fallback.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "default mux")
 	})
 
@@ -57,7 +57,7 @@ func TestMapHandler(t *testing.T) {
 			request, _ := http.NewRequest(http.MethodGet, testCase.path, nil)
 			response := httptest.NewRecorder()
 
-			handler := urlshort.MapHandler(paths, defaultMux)
+			handler := urlshort.MapHandler(paths, fallback)
 
 			handler.ServeHTTP(response, request)
 
@@ -78,11 +78,11 @@ func TestMapHandler(t *testing.T) {
 	}
 
 	for _, testCase := range noRedirectCases {
-		t.Run("use default mux on "+testCase.path, func(t *testing.T) {
+		t.Run("use fallback on "+testCase.path, func(t *testing.T) {
 			request, _ := http.NewRequest(http.MethodGet, testCase.path, nil)
 			response := httptest.NewRecorder()
 
-			handler := urlshort.MapHandler(paths, defaultMux)
+			handler := urlshort.MapHandler(paths, fallback)
 
 			handler.ServeHTTP(response, request)
 
