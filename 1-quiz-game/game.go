@@ -40,11 +40,16 @@ func (g *Game) Play() {
 		close(gameEnds)
 	}()
 
-	select {
-	case <-gameEnds:
+	if g.timeLimit <= 0 {
+		<-gameEnds
 		timeOver = false
-	case <-g.timer.StartTimer(g.timeLimit):
-		timeOver = true
+	} else {
+		select {
+		case <-gameEnds:
+			timeOver = false
+		case <-g.timer.StartTimer(g.timeLimit):
+			timeOver = true
+		}
 	}
 
 	g.questionAsker.ShowScore(score, len(g.problems), timeOver)
