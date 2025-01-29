@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,7 +11,10 @@ import (
 )
 
 func main() {
-	book, err := cyoa.GetBookFromFS(os.DirFS("./"), "gopher.json")
+	pathFlag := flag.String("story", "gopher.json", "path to json file with the story")
+	flag.Parse()
+
+	book, err := cyoa.GetBookFromFS(os.DirFS("./"), *pathFlag)
 
 	if err != nil {
 		log.Fatal("error getting book from fs", err)
