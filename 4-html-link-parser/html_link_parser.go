@@ -13,25 +13,13 @@ type Link struct {
 }
 
 func ParseLinks(r io.Reader) ([]Link, error) {
-	doc, err := html.Parse(r)
+	root, err := html.Parse(r)
 
 	if err != nil {
 		return nil, err
 	}
 
-	body := getBody(doc)
-
-	return getLinks(body), nil
-}
-
-func getBody(root *html.Node) *html.Node {
-	for node := range root.Descendants() {
-		if node.Type == html.ElementNode && node.Data == "body" {
-			return node
-		}
-	}
-
-	return nil
+	return getLinks(root), nil
 }
 
 func getLinks(root *html.Node) []Link {
