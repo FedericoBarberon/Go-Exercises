@@ -1,0 +1,6 @@
+github.com/FedericoBarberon/Go-Exercises/html-link-parser v0.0.0-20250201211047-596648641ee2 h1:PQONdk8VI6GMp70PkHrcH6NmSmY4nVRDrdinsDFDEXM=
+github.com/FedericoBarberon/Go-Exercises/html-link-parser v0.0.0-20250201211047-596648641ee2/go.mod h1:KEs8ZPPWX8Ue3sUTw1RmFHj4UWy6fR0d7S4zqa4rflc=
+github.com/deckarep/golang-set/v2 v2.7.0 h1:gIloKvD7yH2oip4VLhsv3JyLLFnC0Y2mlusgcvJYW5k=
+github.com/deckarep/golang-set/v2 v2.7.0/go.mod h1:VAky9rY/yGXJOLEDv3OMci+7wtDpOF4IN+y82NBOac4=
+golang.org/x/net v0.34.0 h1:Mb7Mrk043xzHgnRM88suvJFwzVrRfHEHJEl5/71CKw0=
+golang.org/x/net v0.34.0/go.mod h1:di0qlW3YNM5oh6GqDGQr92MyTozJPmybPK4Ev/Gm31k=
